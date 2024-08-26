@@ -58,10 +58,8 @@
     </div>
   </div>
 </dialog>
-
 <!-- bg-[url('../image/backgroundbody.png')] bg-cover bg-no-repeat -->
-<body class="w-full h-full bg-base-300 flex flex-col items-center  overflow-auto">
-    
+<body class="w-full h-full bg-[url('../image/backgroundbody.png')] bg-cover bg-no-repeat flex flex-col items-center  overflow-auto">
     <header id="header" class="w-full sticky top-0 z-[100] bg-[#01A0FE] flex justify-between items-center p-2">
         <div class="bg-[#01A0FE] content flex justify-between items-center">
             <div class="logo m-2">
@@ -75,18 +73,12 @@
             </div>
         </div>
     </header>
-
-   
-
     <main class="w-full h-screen flex justify-center items-center container overflow-hidden">
         <div class=" w-full md:w-3/4 h-3/4 z-10 rounded flex justify-center items-center">
             <div class="swiper mySwiper">
                 <div id="swiperContainer" class="swiper-wrapper">
-
                 </div>
-
             </div>
-
         </div>
     </main>
     <section class="bg-white rounded w-full md:w-3/4  text-center p-2">
@@ -146,12 +138,8 @@
                     <span>VS</span>
                     <span class="text-yellow-500" id="choose-player-2">Player 2</span>
                 </div>
-
-
-
-
             </div>
-            <div class="flex  w-full h-[500px] overflow-auto">
+            <div class="flex gap-5 w-full h-[500px] overflow-auto">
                 <table id="table" class="table table-auto w-1/2 ">
                     <!-- head -->
                     <thead class="text-center">
@@ -170,10 +158,10 @@
                     </tbody>
                     <!-- foot -->
                 </table>
-                <div class="bg-base-100 w-1/2 ">
-                    <table id="tableFilter" class="table table-auto w-full">
+                <div class="bg-green-500 h-full w-1/2 ">
+                    <table id="tableFilter" class=" table table-auto w-full ">
                         <!-- head -->
-                        <thead class="text-center">
+                        <thead class="text-center text-zinc-50" >
                             <tr>
                                 <th>Name</th>
                                 <th>Height | Weight</th>
@@ -184,17 +172,14 @@
                                 <th>ls</th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyFilter">
+                        <tbody id="tbodyFilter" class="text-zinc-50">
                         </tbody>
                         <!-- foot -->
                     </table>
                 </div>
             </div>
-            
         </div>
-        
     </section>
-
   
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

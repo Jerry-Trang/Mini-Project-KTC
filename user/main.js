@@ -1,3 +1,9 @@
+window.addEventListener("resize", function () {
+  if (window.innerWidth < 850) { 
+    this.alert("Xem với thiết bị lớn hơn để được trải nghiệm đầy đủ tính năng");
+    this.document.body.style.scale = "70%";
+  }
+})
 // DOM elements
 const swiperContainer = document.getElementById("swiperContainer");
 const tbody = document.getElementById("tbody");
@@ -7,6 +13,8 @@ const search = document.getElementById("search");
 const searchBtn = document.getElementById("searchBtn"); // Ensure searchBtn is defined
 const selectTeam = document.getElementById("selectTeam");
 const selectPosition = document.getElementById("selectPosition");
+
+const TOKEN = ""
 
 let searchData, swiper, dataArray, dataArraySort;
 let isSorted;
@@ -99,12 +107,12 @@ const displaySwiperSlides = (players) => {
       <div class="player flex flex-col md:flex-row gap-5 items-center justify-center">
         <img style="box-shadow: inset 3px 3px 6px rgba(204, 219, 232), inset -3px -3px 6px rgba(255, 255, 255, 0.5);"
              src="${player.avatar || "https://picsum.photos/200/300"}"
-             class="max-w-sm rounded-lg shadow-2xl w-[200px] h-[200px]" />
+             class="max-w-sm rounded-lg shadow-2xl w-[200px] h-[300px]" />
         <div class="flex flex-col md:flex-row items-center justify-center gap-5">
           <h1 class="text-2xl md:text-5xl font-bold">${player.name}</h1>
           <canvas id="playerStatsChart-${
             player.id
-          }" class="bg-white w-full h-full"></canvas>
+          }" class="bg-white w-full h-[200px]"></canvas>
         </div>
       </div>
       <div class="player-info flex flex-col w-full text-center gap-5">
@@ -349,20 +357,13 @@ const searchPlayer = (query, arraydata) => {
     alert("Player not found. Please try a different name.");
   }
 };
-
-
-
 let team, position;
-
 // Event listener for the team selection
 selectTeam.addEventListener('change', (e) => {
   team = e.target.value;
   renderDataTeamForFilter(team, position);
-
-  
    // Call the function to fetch and render data
 });
-
 // Event listener for the position selection
 selectPosition.addEventListener('change', (e) => {
   position = e.target.value;
@@ -370,8 +371,7 @@ selectPosition.addEventListener('change', (e) => {
 });
 
 const renderDataTeamForFilter = async (team, position) => {
-  console.log('Selected Team:', team, 'Selected Position:', position);
-
+  // console.log('Selected Team:', team, 'Selected Position:', position);
   try {
     const response = await fetch(
       "https://ktc-player-base-production.up.railway.app/api/v1/player/filter",
@@ -390,8 +390,9 @@ const renderDataTeamForFilter = async (team, position) => {
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch data');
+      throw alert('There is no player in this field')
     }
+  
 
     const { data } = await response.json();
     console.log('Data:', data);
@@ -475,7 +476,6 @@ const renderDataTeamOptions = async () => {
 // Call the function to populate the options when the page loads
 
 
-
 // Event listeners
 window.addEventListener("scroll", handleScroll);
 search.addEventListener("focus", handleFocus);
@@ -487,7 +487,6 @@ search.addEventListener("focusout", handleFocus);
  
 })();
 initSwiper(0);
-
 searchBtn.addEventListener("click", () => {
   initSwiper(0);
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -498,13 +497,11 @@ searchBtn.addEventListener("click", () => {
     console.log("Please enter a search query.");
   }
 });
-
 btnSort.addEventListener("click", () => {
   displayPlayerList(isSorted ? dataArray : dataArraySort);
   console.log(isSorted);
   isSorted = !isSorted;
 });
-// Initial data fetch
 
 const displayRadarChart = (name, sp, ss, bc, ls, id) => {
   const ctx = document
@@ -525,15 +522,43 @@ const displayRadarChart = (name, sp, ss, bc, ls, id) => {
         {
           label: name,
           data: [sp, ss, bc, ls],
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          backgroundColor: "rgba(54, 162, 235, 0.3)",  // Làm màu nền bớt đậm hơn để đẹp hơn
           borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
+          borderWidth: 2,                              // Tăng độ rộng của đường viền
+          pointBackgroundColor: "rgba(54, 162, 235, 1)", // Màu của các điểm
+          pointBorderColor: "#fff",                    // Viền trắng cho các điểm
+          pointHoverRadius: 5,                         // Tăng kích thước điểm khi hover
+          pointStyle: 'circle',                        // Hình dạng của các điểm
         },
       ],
     },
     options: {
-      scale: {
-        ticks: { beginAtZero: true },
+      responsive: true,
+      scales: {
+        r: {
+          min: 0,
+          max: 120,
+          ticks: {
+            beginAtZero: true,
+            stepSize: 20,                             // Đặt khoảng cách giữa các tick
+            backdropColor: 'rgba(255, 255, 255, 0.5)', // Làm nền của các số trên các tick bớt đậm
+          },
+          grid: {
+            color: "rgba(54, 162, 235, 0.2)",         // Màu của lưới trong biểu đồ
+          },
+          angleLines: {
+            color: "rgba(54, 162, 235, 0.2)",         // Màu của các đường chéo
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',                            // Đặt vị trí của legend lên trên cùng
+          labels: {
+            color: "rgba(54, 162, 235, 1)",           // Màu của văn bản trong legend
+          },
+        },
       },
     },
   });
