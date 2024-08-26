@@ -11,6 +11,11 @@ const selectPosition = document.getElementById("selectPosition");
 let searchData, swiper, dataArray, dataArraySort;
 let isSorted;
 
+let compareList = [];
+let compareNameList = [];
+const compareBtn = document.getElementById("compareBtn");
+const clearBtn = document.getElementById("clearBtn");
+
 // Handle scroll event for header opacity
 const handleScroll = () => {
   header.style.opacity = window.scrollY > 0 ? "0.8" : "1";
@@ -173,6 +178,12 @@ const displayPlayerList = (players) => {
       <td class="text-center">${player.ss}</td>
       <td class="text-center">${player.bc}</td>
       <td class="text-center">${player.ls}</td>
+      <td class="text-center">
+        <button onclick="test(${player.id}, '${player.name}')" type="button" 
+        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 
+        focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 
+        dark:hover:bg-red-700 dark:focus:ring-red-900">+</button>
+      </td>
     `;
     newTr.querySelector(".list").addEventListener("click", () => {
       initSwiper(0);
@@ -194,6 +205,124 @@ const displayPlayerList = (players) => {
     tbody.appendChild(newTr);
   });
 };
+
+function test(idPlayer, namePlayer) {
+  compareList.push(idPlayer);
+  compareNameList.push(namePlayer)
+  if (compareList.length == 2) {
+    compareBtn.style.display = "block";
+    clearBtn.style.display = "block";
+    document.getElementById("choose-player-1").innerText = compareNameList[0];
+    document.getElementById("choose-player-2").innerText = compareNameList[1];
+    document.getElementById("wrap-choose-player").style.display = "block";
+    return;
+  }
+}
+
+function clearCompare() {
+  compareList = [];
+  compareNameList = [];
+  compareBtn.style.display = "none";
+  clearBtn.style.display = "none";
+  document.getElementById("wrap-choose-player").style.display = "none";
+
+  console.log('clear');
+
+}
+
+async function compare() {
+  let player_1 = compareList[0];
+  let player_2 = compareList[1];
+
+  try {
+    const response = await fetch(
+      "https://ktc-player-base-production.up.railway.app/api/v1/player/compare?player_1="+player_1+"&player_2="+player_2,
+      {
+        method: "GET",
+        headers: {
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW52bzEyMDIiLCJpYXQiOjE3MjQzODgyNjQsImV4cCI6MTgxMDc4ODI2NH0.2N72inxcBbNsXXNVqaxA6sLTQibxTcX-yh3aYTho97U",
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
+    }
+
+    const { data } = await response.json();
+    const compare = data.compare;
+    const infoPlayer = data.player;
+
+    const totalPlayerOne = (infoPlayer[0].ss + infoPlayer[0].bc + infoPlayer[0].ls + infoPlayer[0].sp)/4; 
+    const totalPlayerTwo = (infoPlayer[1].ss + infoPlayer[1].bc + infoPlayer[1].ls + infoPlayer[1].sp)/4; 
+    
+    const html = `<div class="flex">
+                      <div id="" class="">${infoPlayer[0].ss}</div>
+                      ${compare[0].ss > 0 ? `<div class="text-green-500">(+${compare[0].ss})</div>` 
+                      : `<div class="text-red-500">(${compare[0].ss})</div>`}
+                  </div>
+                  <div>SS</div>
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[1].ss}</div>
+                      ${compare[1].ss > 0 ? `<div class="text-green-500">(+${compare[1].ss})</div>` 
+                      : `<div class="text-red-500">(${compare[1].ss})</div>`}
+                  </div>
+
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[0].bc}</div>
+                      ${compare[0].bc > 0 ? `<div class="text-green-500">(+${compare[0].bc})</div>` 
+                      : `<div class="text-red-500">(${compare[0].bc})</div>`}
+                  </div>
+                  <div>BC</div>
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[1].bc}</div>
+                      ${compare[1].bc > 0 ? `<div class="text-green-500">(+${compare[1].bc})</div>` 
+                      : `<div class="text-red-500">(${compare[1].bc})</div>`}
+                  </div>
+
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[0].ls}</div>
+                      ${compare[0].ls > 0 ? `<div class="text-green-500">(+${compare[0].ls})</div>` 
+                      : `<div class="text-red-500">(${compare[0].ls})</div>`}
+                  </div>
+                  <div>LS</div>
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[1].ls}</div>
+                      ${compare[1].ls > 0 ? `<div class="text-green-500">(+${compare[1].ls})</div>` 
+                      : `<div class="text-red-500">(${compare[1].ls})</div>`}
+                  </div>
+
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[0].sp}</div>
+                      ${compare[0].sp > 0 ? `<div class="text-green-500">(+${compare[0].sp})</div>` 
+                      : `<div class="text-red-500">(${compare[0].sp})</div>`}
+                  </div>
+                  <div>SP</div>
+                  <div class="flex">
+                      <div id="" class="">${infoPlayer[1].sp}</div>
+                      ${compare[1].sp > 0 ? `<div class="text-green-500">(+${compare[1].sp})</div>` 
+                      : `<div class="text-red-500">(${compare[1].sp})</div>`}
+                  </div>`
+
+                  document.getElementById("panel-compare").innerHTML = html;
+                  document.getElementById("totalPlayer-1").innerText = Math.round(totalPlayerOne);
+                  document.getElementById("totalPlayer-2").innerText = Math.round(totalPlayerTwo);
+                  document.getElementById("namePlayer-1").innerText = infoPlayer[0].name;
+                  document.getElementById("namePlayer-2").innerText = infoPlayer[1].name;
+
+                  if (totalPlayerOne > totalPlayerTwo) {
+                    document.getElementById("scoreHight-1").innerText = `+${totalPlayerOne - totalPlayerTwo}`;
+                  } else {
+                    document.getElementById("scoreHight-2").innerText = `+${totalPlayerTwo - totalPlayerOne}`;
+
+                  }
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
 
 const searchPlayer = (query, arraydata) => {
   const lowerCaseQuery = query.toLowerCase();
